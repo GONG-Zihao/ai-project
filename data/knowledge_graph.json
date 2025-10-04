@@ -1,0 +1,67 @@
+{
+  "nodes": [
+    {
+      "id": "math_basic",
+      "attributes": {
+        "name": "基础数学",
+        "level": "基础"
+      }
+    },
+    {
+      "id": "algebra",
+      "attributes": {
+        "name": "代数",
+        "level": "基础"
+      }
+    },
+    {
+      "id": "geometry",
+      "attributes": {
+        "name": "几何",
+        "level": "基础"
+      }
+    },
+    {
+      "id": "calculus",
+      "attributes": {
+        "name": "微积分",
+        "level": "高级"
+      }
+    },
+    {
+      "id": "勾股定理",
+      "attributes": {
+        "subject": "数学",
+        "description": "简单来说就是用于判断三角形中是否含有直角，并且在已确定是直角三角形的情况下，通过两边求出第三边"
+      }
+    }
+  ],
+  "edges": [
+    {
+      "source": "math_basic",
+      "target": "algebra",
+      "attributes": {
+        "relation": "prerequisite"
+      }
+    },
+    {
+      "source": "math_basic",
+      "target": "geometry",
+      "attributes": {
+        "relation": "prerequisite"
+      }
+    },
+    {
+      "source": "algebra",
+      "target": "calculus",
+      "attributes": {
+        "relation": "prerequisite"
+      }
+    },
+    {
+      "source": "勾股定理",
+      "target": "math_basic",
+      "attributes": {}
+    }
+  ]
+}

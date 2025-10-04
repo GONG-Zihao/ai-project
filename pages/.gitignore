@@ -1,0 +1,22 @@
+# Python
+.venv/
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Node / Web (如有)
+node_modules/
+dist/
+build/
+
+# Data / Models (避免超大文件进 Git)
+data/
+datasets/
+models/
+checkpoints/
+
+# OS / Editor
+.DS_Store
+*.log
+.env
