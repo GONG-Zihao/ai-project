@@ -1,0 +1,41 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: ai_edu
+          POSTGRES_USER: ai_edu
+          POSTGRES_PASSWORD: ai_edu
+        ports:
+          - 5432:5432
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements/base.txt
+          pip install -r requirements/dev.txt
+          pip install -e packages/common
+      - name: Lint
+        run: |
+          ruff check services packages
+          black --check services packages
+      - name: Run tests
+        env:
+          DATABASE_URL: postgresql+asyncpg://ai_edu:ai_edu@localhost:5432/ai_edu
+        run: |
+          pytest -m "not e2e"

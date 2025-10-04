@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ai-edu-core"
+version = "0.1.0"
+description = "Shared components for AI Education Platform"
+requires-python = ">=3.10"
+packages = ["ai_edu_core"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+

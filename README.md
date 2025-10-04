@@ -1,34 +1,29 @@
-# AI个性化学习助手
+# AI Education Platform (Next-Gen)
 
-## 项目简介
-本项目是一个基于大语言模型的AI个性化学习助手，支持文本/图片题目输入、AI自动答疑、错题本管理、个性化学习建议和学习进度追踪。适合学生和自学者提升学习效率。
+This repository houses the next-generation "AI+教育教学" platform. It follows the blueprint defined in `AI_EDU_OPTIMIZATION_BLUEPRINT.md` and implements a modular architecture ready for classroom-scale deployments.
 
-## 主要功能
-- 文本/图片题目输入与AI答疑
-- 错题本自动归档与回顾
-- 个性化学习计划与资源推荐
-- 学习进度可视化追踪
+## Repository Layout
 
-## 运行方法
-1. 安装依赖：
-   ```bash
-   pip install -r requirements.txt
-   ```
-2. 启动应用：
-   ```bash
-   streamlit run app.py
-   ```
+```
+.
+├─ apps/                # Frontend applications (web, admin, legacy streamlit)
+├─ services/            # Backend microservices (api, ai, retrieval, worker)
+├─ packages/            # Shared Python packages and SDKs
+├─ infra/               # Deployment assets (docker, k8s, migrations)
+├─ docs/                # Documentation (legacy README, blueprints, specs)
+├─ configs/             # Centralised configuration templates
+├─ requirements/        # Dependency manifests
+├─ tests/               # Automated tests (unit, integration, e2e stubs)
+└─ AI_EDU_OPTIMIZATION_BLUEPRINT.md
+```
 
-## 依赖说明
-- streamlit：前端界面与交互
-- deepseek：AI大模型API
-- pillow：图片处理
-- pandas：数据管理
+## Quickstart
 
-## 创新亮点
-- AI原生、全流程体验
-- 支持多模态输入
-- 个性化推荐与错题管理
+1. Copy `.env.example` to `.env` and adjust secrets.
+2. Install dependencies: `make install-all`
+3. Launch local stack: `make dev`
+4. Access FastAPI docs at `http://localhost:8000/docs` (after Phase 1 setup)
 
----
-如需API密钥或本地模型接入，请参考代码注释。 
+## Status
+
+Implementation tracks the phases defined in the blueprint. See `docs/CHANGELOG.md` (to be created) for progress updates.
