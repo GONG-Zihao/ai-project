@@ -11,6 +11,7 @@ async def upsert(
     subject: str,
     name: str,
     mastery_level: float,
+    description: str | None = None,
 ) -> KnowledgePoint:
     stmt = select(KnowledgePoint).where(
         KnowledgePoint.tenant_id == tenant_id,
@@ -25,10 +26,13 @@ async def upsert(
             subject=subject,
             name=name,
             mastery_level=mastery_level,
+            description=description,
         )
         db.add(point)
     else:
         point.mastery_level = mastery_level
+        if description is not None:
+            point.description = description
     await db.commit()
     await db.refresh(point)
     return point

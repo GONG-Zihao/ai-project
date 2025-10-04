@@ -40,5 +40,54 @@ class StreamlitAPIClient:
         response.raise_for_status()
         return {"items": response.json()}
 
+    async def create_mistake(self, token: str, payload: Dict[str, Any]) -> Dict[str, Any]:
+        if not self._client:
+            raise RuntimeError("API client disabled")
+        headers = {"Authorization": f"Bearer {token}"}
+        response = await self._client.post("/mistakes", json=payload, headers=headers)
+        response.raise_for_status()
+        return response.json()
+
+    async def get_learning_plan(self, token: str) -> Dict[str, Any]:
+        if not self._client:
+            raise RuntimeError("API client disabled")
+        headers = {"Authorization": f"Bearer {token}"}
+        response = await self._client.get("/learning/plan", headers=headers)
+        response.raise_for_status()
+        return response.json()
+
+    async def get_knowledge_mastery(self, token: str, subject: str | None = None) -> Dict[str, Any]:
+        if not self._client:
+            raise RuntimeError("API client disabled")
+        headers = {"Authorization": f"Bearer {token}"}
+        params = {"subject": subject} if subject else None
+        response = await self._client.get("/learning/knowledge", headers=headers, params=params)
+        response.raise_for_status()
+        return response.json()
+
+    async def get_learning_overview(self, token: str) -> Dict[str, Any]:
+        if not self._client:
+            raise RuntimeError("API client disabled")
+        headers = {"Authorization": f"Bearer {token}"}
+        response = await self._client.get("/learning/overview", headers=headers)
+        response.raise_for_status()
+        return response.json()
+
+    async def get_progress_metrics(self, token: str) -> Dict[str, Any]:
+        if not self._client:
+            raise RuntimeError("API client disabled")
+        headers = {"Authorization": f"Bearer {token}"}
+        response = await self._client.get("/analytics/progress", headers=headers)
+        response.raise_for_status()
+        return response.json()
+
+    async def get_achievements(self, token: str) -> Dict[str, Any]:
+        if not self._client:
+            raise RuntimeError("API client disabled")
+        headers = {"Authorization": f"Bearer {token}"}
+        response = await self._client.get("/analytics/achievements", headers=headers)
+        response.raise_for_status()
+        return response.json()
+
 
 api_client = StreamlitAPIClient()

@@ -1,7 +1,13 @@
 import openai
 from PIL import Image
 import io
-from paddleocr import PaddleOCR
+try:  # paddleocr 体积较大，允许按需安装
+    from paddleocr import PaddleOCR
+except ImportError:  # pragma: no cover - optional dependency
+    PaddleOCR = None
+    OCR_IMPORT_ERROR = "paddleocr 未安装"
+else:
+    OCR_IMPORT_ERROR = None
 import networkx as nx
 import json
 import os
@@ -12,7 +18,14 @@ BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
 
 # 初始化OCR
-ocr = PaddleOCR(use_angle_cls=True, lang="ch")
+if PaddleOCR:
+    try:
+        ocr = PaddleOCR(use_angle_cls=True, lang="ch")
+    except Exception as exc:  # pragma: no cover - optional dependency
+        OCR_IMPORT_ERROR = f"初始化 PaddleOCR 失败: {exc}"
+        ocr = None
+else:
+    ocr = None
 
 # 知识图谱
 class KnowledgeGraph:
@@ -88,6 +101,8 @@ knowledge_graph = KnowledgeGraph()
 
 def extract_text_from_image(image):
     """从图片中提取文字"""
+    if ocr is None:
+        return f"[OCR功能未启用：{OCR_IMPORT_ERROR or '请安装 paddleocr'}]"
     try:
         result = ocr.ocr(image, cls=True)
         text = ""

@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ...db.models.user import User
+from ...db.models.user import User, UserRole
 from ...db.session import get_db
 from ...repositories import mistakes as mistakes_repo
 from ...repositories import knowledge as knowledge_repo
 from ...services.learning_service import learning_service
-from ...schemas.knowledge import KnowledgePointRead
-from ..deps import get_current_user
+from ...schemas.knowledge import KnowledgePointRead, KnowledgePointUpsert
+from ..deps import get_current_user, require_roles
 
 router = APIRouter()
 
@@ -31,6 +31,23 @@ async def get_knowledge_mastery(
     await learning_service.update_knowledge_mastery(db, user_id=current_user.id, tenant_id=current_user.tenant_id)
     knowledge = await knowledge_repo.list_for_tenant(db, tenant_id=current_user.tenant_id, subject=subject)
     return {"knowledge": [KnowledgePointRead.model_validate(k) for k in knowledge]}
+
+
+@router.post("/knowledge", response_model=KnowledgePointRead, status_code=201)
+async def upsert_knowledge_point(
+    payload: KnowledgePointUpsert,
+    current_user: User = Depends(require_roles(UserRole.TEACHER, UserRole.ADMIN)),
+    db: AsyncSession = Depends(get_db),
+) -> KnowledgePointRead:
+    point = await knowledge_repo.upsert(
+        db,
+        tenant_id=current_user.tenant_id,
+        subject=payload.subject,
+        name=payload.name,
+        mastery_level=payload.mastery_level,
+        description=payload.description,
+    )
+    return KnowledgePointRead.model_validate(point)
 
 
 @router.get("/overview")

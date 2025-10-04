@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ...db.models.user import User
+from ...db.models.user import User, UserRole
 from ...db.session import get_db
 from ...repositories import interactions as interaction_repo
 from ...repositories import audit as audit_repo
 from ...services.ai_service import ai_service
-from ...schemas.qa import QARequest, QAResponse
-from ..deps import get_current_user
+from ...schemas.qa import LessonPlanRequest, LessonPlanResponse, QARequest, QAResponse
+from ..deps import get_current_user, require_roles
 
 router = APIRouter()
 
@@ -42,3 +42,26 @@ async def ask_question(
         metadata={"subject": payload.subject},
     )
     return QAResponse(**result)
+
+
+@router.post("/lesson-plan", response_model=LessonPlanResponse)
+async def generate_lesson_plan(
+    payload: LessonPlanRequest,
+    current_user: User = Depends(require_roles(UserRole.TEACHER, UserRole.ADMIN)),
+    db: AsyncSession = Depends(get_db),
+) -> LessonPlanResponse:
+    result = await ai_service.generate_lesson_plan(
+        subject=payload.subject,
+        topic=payload.topic,
+        objectives=payload.objectives,
+        audience=payload.audience,
+    )
+    await audit_repo.log_event(
+        db,
+        tenant_id=current_user.tenant_id,
+        user_id=current_user.id,
+        action="generate_lesson_plan",
+        resource="qa",
+        metadata={"subject": payload.subject, "topic": payload.topic},
+    )
+    return LessonPlanResponse(**result)

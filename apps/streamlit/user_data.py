@@ -6,18 +6,32 @@ import pandas as pd
 import numpy as np
 from collections import defaultdict
 import re
-import pymongo
-from pymongo import MongoClient
+try:  # MongoDB 可选
+    import pymongo
+    from pymongo import MongoClient
+except ImportError:  # pragma: no cover
+    pymongo = None
+    MongoClient = None
 from hashlib import sha256
 import streamlit as st
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
 
-# MongoDB connection
-client = MongoClient('mongodb://localhost:27017/')
-db = client['ai_study']
-users = db['users']
+# MongoDB connection（可选）
+if MongoClient:
+    try:
+        client = MongoClient('mongodb://localhost:27017/')
+        db = client['ai_study']
+        users = db['users']
+    except Exception:
+        client = None
+        db = None
+        users = None
+else:
+    client = None
+    db = None
+    users = None
 
 class UserProfile:
     def __init__(self, user_id="default"):
@@ -279,10 +293,14 @@ def is_valid_phone(phone):
 
 def check_user_exists(username):
     """Check if username already exists"""
+    if users is None:
+        return False
     return users.find_one({'username': username}) is not None
 
 def register_user(username, password, phone):
     """Register new user"""
+    if users is None:
+        return False, "未启用 MongoDB，请使用后端 API 注册"
     if not username or not password or not phone:
         return False, "所有字段都必须填写"
     
@@ -310,6 +328,8 @@ def register_user(username, password, phone):
 
 def validate_login(username, password):
     """Validate user login"""
+    if users is None:
+        return False, "未启用 MongoDB，请使用后端 API 登录"
     if not username or not password:
         return False, "用户名和密码不能为空"
     

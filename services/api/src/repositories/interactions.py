@@ -30,11 +30,13 @@ async def create(
     return record
 
 
-async def list_for_user(db: AsyncSession, user_id: int, limit: int = 100) -> list[Interaction]:
-    result = await db.execute(
+async def list_for_user(db: AsyncSession, user_id: int, limit: int | None = 100) -> list[Interaction]:
+    stmt = (
         select(Interaction)
         .where(Interaction.user_id == user_id)
         .order_by(Interaction.created_at.desc())
-        .limit(limit)
     )
+    if limit is not None:
+        stmt = stmt.limit(limit)
+    result = await db.execute(stmt)
     return list(result.scalars())

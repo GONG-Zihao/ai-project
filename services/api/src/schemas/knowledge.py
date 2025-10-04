@@ -1,7 +1,16 @@
 from datetime import datetime
 from typing import Optional
 
+from pydantic import BaseModel
+
 from .base import ORMModel
+
+
+class KnowledgePointUpsert(BaseModel):
+    subject: str
+    name: str
+    description: Optional[str] = None
+    mastery_level: float = 0.5
 
 
 class KnowledgePointRead(ORMModel):
