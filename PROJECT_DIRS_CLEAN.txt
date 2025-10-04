@@ -1,0 +1,5 @@
+./.idea
+./.idea/inspectionProfiles
+./assets
+./data
+./pages

@@ -1,0 +1,13 @@
+Files: 1850
+Dirs:  240
+Top 10 extensions:
+    820 py
+    811 pyc
+     28 typed
+     22 txt
+     10 pyi
+      9 so
+      9 0
+      6 json
+      6 exe
+      5 xml
